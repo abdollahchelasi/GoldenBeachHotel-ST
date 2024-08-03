@@ -1,0 +1,1 @@
+# GoldenBeachHotel-ST
