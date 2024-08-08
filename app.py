@@ -1,8 +1,12 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 from jdatetime import datetime
-import hydralit_components as hc
 import sqlite3
+
+
+
+
+
 
 st.set_page_config(
         page_title="هتل ساحل طلایی قشم",
@@ -30,36 +34,52 @@ tim = now.strftime("%Y/%m/%d")
 
 # with col1:
 
+with st.sidebar:
+   menu_id = option_menu (
+      menu_title=None,
+      options=[ "صفحه اصلی","ساحل" , "مراسمات", "رستوران", "کافی شاب","اتاق ها", "سوالات"],
+      icons=["house"],
+      menu_icon="cast",
+      default_index=0,
+      orientation="vertical",
+
+      styles={
+         "container": {"background-color": "#4b5efb"},
+         "nav-link-selected": {"background-color": "#040b3e"},
+         "nav-link": {"font-size": "20px", "text-align": "center_y: 0.0", "margin":"0px", "--hover-color": "#afb8fb"},
+
+        }
+    )
 
 
 
 
-menu_data = [
+# menu_data = [
 
     
-    {'id':'home','icon': "🏚", 'label':"صفحه اصلی",},
+#     {'id':'home','icon': "🏚", 'label':"صفحه اصلی",},
 
-    {"id": "room", "icon": "🚪", "label": "اتاق ها"},
-    {'id':'cafe','icon':"☕",'label':"کافی شاب"},
-    {'id':'resturan','icon': "🍽️", 'label':"رستوران"},
-    {'id':'marasem','icon': " 🎁", 'label':"مراسمات"},
-    {'id':'sahel','icon': " 🏖️", 'label':"ساحل"},
-    {'id':'soal','icon': "❓", 'label':"سوالات"},
+#     {"id": "room", "icon": "🚪", "label": "اتاق ها"},
+#     {'id':'cafe','icon':"☕",'label':"کافی شاب"},
+#     {'id':'resturan','icon': "🍽️", 'label':"رستوران"},
+#     {'id':'marasem','icon': " 🎁", 'label':"مراسمات"},
+#     {'id':'sahel','icon': " 🏖️", 'label':"ساحل"},
+#     {'id':'soal','icon': "❓", 'label':"سوالات"},
     
-]
+# ]
 
-over_theme = {'txc_inactive': '#FFFFFF'}
-menu_id = hc.nav_bar(
-    menu_definition=menu_data,
-    override_theme={'txc_inactive': 'white','menu_background':'#b48216','txc_active':'yellow','option_active':'#000000'},
+# over_theme = {'txc_inactive': '#FFFFFF'}
+# menu_id = hc.nav_bar(
+#     menu_definition=menu_data,
+#     override_theme={'txc_inactive': 'white','menu_background':'#4b5efb','txc_active':'yellow','option_active':'#000000'},
     
-#     home_name='Home',
-#     login_name='Logout',
-    hide_streamlit_markers=False, #will show the st hamburger as well as the navbar now!
-    sticky_nav=True, #at the top or not
-    sticky_mode='pinned', #jumpy or not-jumpy, but sticky or pinned
+# #     home_name='Home',
+# #     login_name='Logout',
+#     hide_streamlit_markers=False, #will show the st hamburger as well as the navbar now!
+#     sticky_nav=True, #at the top or not
+#     sticky_mode='pinned', #jumpy or not-jumpy, but sticky or pinned
 
-)
+# )
 
 
 
@@ -67,7 +87,7 @@ menu_id = hc.nav_bar(
 
 
 
-if menu_id == "room":
+if menu_id == "اتاق ها":
 
         st.header("⛪️ اتاق های ساحل طلایی ⛪️")
 
@@ -137,18 +157,18 @@ if menu_id == "room":
 
 
 
-if menu_id == "home":
+if menu_id == "صفحه اصلی":
   
   selected = option_menu (
       menu_title=None,
-      options=[ "جهت رزرو" ,"ادمین", "خانه"],
-      icons=["phone","key","house" ],
+      options=[ "جهت رزرو" , "قیمت اتاق ها" ,"ادمین", "صفحه اصلی"],
+      icons=["phone","book","key","house" ],
       menu_icon="cast",
-      default_index=2,
+      default_index=3,
       orientation="horizontal",
 
       styles={
-         "container": {"background-color": "#b48216"},
+         "container": {"background-color": "#4b5efb"},
          "nav-link-selected": {"background-color": "#040b3e"},
          "nav-link": {"font-size": "20px", "text-align": "center_y: 0.0", "margin":"0px", "--hover-color": "#afb8fb"},
 
@@ -181,7 +201,7 @@ if menu_id == "home":
         "هشدار : کد و نام محصولات شما نباید مثل محصولات دیگه ای که اضافه میکنید باشد. کد محصولات رو با اعداد انگلیسی و از شماره بالا به پایین شروع کنید . مانند : ( از 999 شروع کنید به پایین) "
     )
 
-        if st.button("اضافه کردن"):
+        if st.button("اضافه کردن محصول"):
           cur.execute("INSERT INTO pics(id, img, note) VALUES(?,?,?)", ("", "", ""))
           con.commit()
 
@@ -191,8 +211,8 @@ if menu_id == "home":
           with st.form(f"ID-{row[0]}", clear_on_submit=True):
 
             imgcol, notecol = st.columns([3, 2])
-            id = notecol.text_input("کد", row[1])
-            note = notecol.text_area("نام", row[3])
+            id = notecol.text_input("کد محصول", row[1])
+            note = notecol.text_area("نام محصول", row[3])
             if row[2]:
                 
                 img = row[2]
@@ -200,21 +220,21 @@ if menu_id == "home":
             file = imgcol.file_uploader("تصاویر", ["png", "jpg", "gif", "jpeg", "bmp"])
             if file:
                 img = file.read()
-            if notecol.form_submit_button("ذخیره"):
-            
+            if notecol.form_submit_button("ذخیره محصول"):
+                try:
                    
-                cur.execute(
+                  cur.execute(
                     "UPDATE pics SET id=?, img=?, note=? WHERE id=?;",
                     (id, img, note, str(row[1])),
                 )
 
-                con.commit()
-                st.experimental_rerun()
+                  con.commit()
+                  st.experimental_rerun()
 
-                
-                  # st.error("لطفا کامل پر کنید")
+                except:
+                   st.error("لطفا کامل پر کنید")
 
-            if notecol.form_submit_button("حذف"):
+            if notecol.form_submit_button("حذف محصول"):
                 cur.execute(f"""DELETE FROM pics WHERE rowid="{row[0]}";""")
                 con.commit()
                 st.experimental_rerun()
@@ -275,9 +295,13 @@ if menu_id == "home":
 
 
 
+  elif selected == "قیمت اتاق ها":
+    st.success("در حال بروزرسانی قیمت ها")   
+    # st.image("q.jpg")
+
 
   # st.divider()
-  elif selected == "خانه":
+  elif selected == "صفحه اصلی":
 
     col1,col2 = st.columns(2)
 
@@ -304,8 +328,8 @@ if menu_id == "home":
         st.write("---")
         imgcol, notecol = st.columns([3, 2])
     # id=notecol.text_input('id', row[1])
-        id=notecol.text_input('کد', row[1])
-        note=notecol.text_area('نام', row[3])
+        id=notecol.text_input('کد محصول', row[1])
+        note=notecol.text_area('اسم محصول', row[3])
 
         
         if row[2]:
@@ -319,7 +343,7 @@ if menu_id == "home":
 
 
 
-if menu_id == "cafe":
+if menu_id == "کافی شاب":
 
 
   st.header("🍫  کافی شاپ ساحل طلایی")
@@ -338,7 +362,7 @@ if menu_id == "cafe":
       with st.expander("کافی شاپ", expanded=True):
           st.image("c.png")
           st.caption("""
-           پفک و چیپس های خارجی
+          کافی شاپ
               """)
 
 
@@ -351,7 +375,7 @@ if menu_id == "cafe":
       st.image("c1.jpg")
       st.caption(
         """
-        انواع نوشیدنی های سرد و گرم
+            کافی شاپ
         """
       )
 
@@ -362,7 +386,7 @@ if menu_id == "cafe":
     st.image("c2.jpg")
     st.caption(
     """
-         بهترین ویتامین های خارجی
+        کافی شاپ
     """
   )
 
@@ -376,7 +400,7 @@ if menu_id == "cafe":
 
 
 
-if menu_id == "resturan":
+if menu_id == "رستوران":
 
 
   st.header("👨🏻‍🍳 رستوران ساحل طلایی 👨🏻‍🍳")
@@ -391,7 +415,7 @@ if menu_id == "resturan":
       with st.expander("رستوران", expanded=True):
           st.image("https://cdn01.booking.ir/2023/7/166ad996-16b4-40dc-bb49-3908bf815f7c.jpg")
           st.caption("""
-              انواع غذاهای دریایی 
+              رستوران هتل ساحل طلایی
               """)
 
 
@@ -403,7 +427,7 @@ if menu_id == "resturan":
       st.image("https://cdn.alibaba.ir/ostorage/hotel-accommodation-images/2023-09-17/1350cbdf-c515-4673-a9e4-94113a3ada4e.jpg")
       st.caption(
         """
-           رستوران هتل ساحل طلایی
+        رستوران هتل ساحل طلایی
         """
       )
 
@@ -411,7 +435,7 @@ if menu_id == "resturan":
 
 
 
-if menu_id == "sahel":
+if menu_id == "ساحل":
 
 
   st.header("ساحل 🌊 ساحل طلایی 🌊")
@@ -429,7 +453,7 @@ if menu_id == "sahel":
       with st.expander("ساحل", expanded=True):
           st.image("d.jpg")
           st.caption("""
-              ساحل زیبا
+              ساحل
               """)
 
 
@@ -442,7 +466,7 @@ if menu_id == "sahel":
       st.image("d2.jpg")
       st.caption(
         """
-          آلاچیق های کنار ساحل
+          ساحل
         """
       )
 
@@ -453,7 +477,7 @@ if menu_id == "sahel":
       st.image("d3.jpg")
       st.caption(
         """
-          صدای امواج دریا
+          ساحل
         """
       )
 
@@ -474,7 +498,7 @@ if menu_id == "sahel":
 
 
 
-if menu_id == "marasem":
+if menu_id == "مراسمات":
    
 
 
@@ -514,7 +538,7 @@ if menu_id == "marasem":
 
 
 
-if menu_id == "soal":
+if menu_id == "سوالات":
    
 
   st.header("❓ سوالات ❓")
@@ -560,7 +584,7 @@ if menu_id == "soal":
 
   elif option == "کافی شاپ چه ساعتی باز میشه ؟ ☕":
     st.write("""
-    کافی شاپ 7 صبح الی 23 ☕
+    کافی شاپ صبح 11 الی 13 باز است و عصر از ساعت 16 الی 23 باز است ☕
     """)
 
 
@@ -590,9 +614,8 @@ if menu_id == "soal":
 
 
 
-st.divider()
 
-st.markdown("[طراحی شده توسط عبدالله چلاسی](tel:989335825325)")
+
 
 
 
